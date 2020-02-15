@@ -13,9 +13,10 @@ class BaseOptions():
     It also gathers additional options defined in <modify_commandline_options> functions in both dataset class and model class.
     """
 
-    def __init__(self):
+    def __init__(self, argstr=None):
         """Reset the class; indicates the class hasn't been initailized"""
         self.initialized = False
+        self.argstr = argstr
 
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
@@ -47,6 +48,7 @@ class BaseOptions():
         parser.add_argument('--crop_size', type=int, default=256, help='then crop to this size')
         parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
         parser.add_argument('--preprocess', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop | crop | scale_width | scale_width_and_crop | none]')
+        parser.add_argument('--no_strong_aug', action='store_true', help='if specified, do not apply strong data augmentation')
         parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
         # additional parameters
@@ -68,13 +70,14 @@ class BaseOptions():
             parser = self.initialize(parser)
 
         # get the basic options
-        opt, _ = parser.parse_known_args()
+        #opt, _ = parser.parse_known_args(args=self.argstr)
+        opt, _ = parser.parse_known_args(args=self.argstr.split() if self.argstr else None)
 
         # modify model-related parser options
         model_name = opt.model
         model_option_setter = models.get_option_setter(model_name)
         parser = model_option_setter(parser, self.isTrain)
-        opt, _ = parser.parse_known_args()  # parse again with new defaults
+        opt, _ = parser.parse_known_args(args=self.argstr.split() if self.argstr else None)  # parse again with new defaults
 
         # modify dataset-related parser options
         dataset_name = opt.dataset_mode
@@ -83,7 +86,7 @@ class BaseOptions():
 
         # save and return the parser
         self.parser = parser
-        return parser.parse_args()
+        return parser.parse_args(args=self.argstr.split() if self.argstr else None)
 
     def print_options(self, opt):
         """Print and save options

@@ -7,6 +7,9 @@ class TrainOptions(BaseOptions):
     It also includes shared options defined in BaseOptions.
     """
 
+    def __init__(self, argstr=None):
+        super().__init__(argstr=argstr)
+
     def initialize(self, parser):
         parser = BaseOptions.initialize(self, parser)
         # visdom and HTML visualization parameters
