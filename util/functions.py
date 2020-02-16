@@ -96,14 +96,18 @@ def simplify_by_kmeans(img, K=10, quantize_color=True):
     return img
 
 
-def abstract_image(img_file, K=10, grayscale=False, add_edge=True,
-                   quantize_color=True, resize=None):
+def abstract_image_array(img, K=10, grayscale=False, add_edge=True, quantize_color=True):
+    """Make abstract version of image from array.
+    This will:
+        - Downgrade to K colors, resulting image will have only K colors.
+        - (option) Convert to grayscale.
+        - Edges extracted from original image will be overlayed on top of resulting image.
+        - Quantize color value.
+
+    Returns:
+        abstract version of original image.
     """
-    """
-    img = cv2.imread(str(img_file))
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    if resize is not None:
-        img = cv2.resize(img, resize)
+
     org_img = img.copy()
 
     # apply grayscale to make clustering easier
@@ -123,4 +127,22 @@ def abstract_image(img_file, K=10, grayscale=False, add_edge=True,
     if grayscale:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)        
     
-    return org_img, img
+    return img
+
+
+def abstract_image(img_file, K=10, grayscale=False, add_edge=True,
+                   quantize_color=True, resize=None):
+    """Make abstract version of image from file.
+
+    Returns:
+        orginal image: image loaded from file as is.
+        abstract image: converted one.
+    """
+
+    img = cv2.imread(str(img_file))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    if resize is not None:
+        img = cv2.resize(img, resize)
+    
+    return img, abstract_image_array(img, K=K, grayscale=grayscale,
+                                     add_edge=add_edge, quantize_color=quantize_color)

@@ -1,4 +1,3 @@
-from dlcliche import utils
 import cv2
 from torchvision.transforms import ToTensor
 from options.test_options import TestOptions
@@ -7,6 +6,18 @@ from util.util import tensor2im
 
 
 class RunCycleGAN:
+    """CycleGAN wrapper class for runtime inference.
+
+    Example:
+        PROJECT = 'YOUR FOLDER NAME UNDER checkpoint'
+        SIZE = 'YOUR DATA PX SIZE'
+        GPU = '-1' # if you use CPU, else 0 or whatever.
+        options = f'--dataroot dummy --name {PROJECT} --model test --no_dropout  --load_size {SIZE} --crop_size {SIZE} --gpu_ids {GPU}'
+        cyclegan = RunCycleGAN(options)
+          :
+        converted = cyclegan.convert(image_array_RGB_HWC)
+    """
+
     def __init__(self, options):
         opt = TestOptions(options).parse()  # get test options
         # hard-code some parameters for test
