@@ -1,5 +1,5 @@
 import cv2
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, Normalize
 from options.test_options import TestOptions
 from models import create_model
 from util.util import tensor2im
@@ -31,9 +31,10 @@ class RunCycleGAN:
         model.eval()
         self.opt, self.model = opt, model
         self.totensor = ToTensor()
+        self.normalize = Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 
     def convert(self, img):
-        data = {'A': self.totensor(img).unsqueeze(0), 'A_paths': 'dummy'}
+        data = {'A': self.normalize(self.totensor(img)).unsqueeze(0), 'A_paths': 'dummy'}
         self.model.set_input(data)  # unpack data from data loader
         self.model.test()           # run inference
         visuals = self.model.get_current_visuals()  # get image results

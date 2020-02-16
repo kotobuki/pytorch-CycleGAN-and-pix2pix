@@ -38,7 +38,7 @@ class RunPix2Pix(RunCycleGAN):
         return abst_img
 
     def convert(self, abst_img):
-        AorB = self.totensor(abst_img).unsqueeze(0)
+        AorB = self.normalize(self.totensor(abst_img)).unsqueeze(0)
         data = {
             'A': AorB, 'A_paths': 'dummy', 
             'B': AorB, 'B_paths': 'dummy',
