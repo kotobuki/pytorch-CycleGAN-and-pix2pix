@@ -112,6 +112,40 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
     return transforms.Compose(transform_list)
 
 
+class AugStrong:
+    instance = None
+
+    @staticmethod
+    def strong_aug(p=0.7):
+        from albumentations import (
+            HorizontalFlip, IAAPerspective, ShiftScaleRotate, CLAHE, RandomRotate90,
+            Transpose, ShiftScaleRotate, Blur, OpticalDistortion, GridDistortion, HueSaturationValue,
+            IAAAdditiveGaussianNoise, GaussNoise, MotionBlur, MedianBlur, IAAPiecewiseAffine,
+            IAASharpen, IAAEmboss, RandomBrightnessContrast, Flip, OneOf, Compose
+        )
+        augs = [
+            OneOf([
+                MotionBlur(p=0.3),
+                #MedianBlur(blur_limit=3, p=0.1),
+                Blur(blur_limit=10, p=0.3),
+            ], p=0.3),
+            ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.2, rotate_limit=45, p=0.2),
+            OneOf([
+                OpticalDistortion(p=0.3),
+                #GridDistortion(p=0.1), # causes segmentation fault, due to version mismatch with open cv...
+                IAAPiecewiseAffine(p=0.2),
+            ], p=0.3),
+        ]
+        return Compose(augs, p=p)
+
+    @staticmethod
+    def get_aug(p=0.7):
+        if AugStrong.instance is None:
+            print('  Activated Albumentations...')
+            AugStrong.instance = AugStrong.strong_aug(p=p)
+        return AugStrong.instance
+
+
 def __make_power_2(img, base, method=Image.BICUBIC):
     ow, oh = img.size
     h = int(round(oh / base) * base)

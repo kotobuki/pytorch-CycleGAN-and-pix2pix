@@ -1,7 +1,8 @@
 import os.path
-from data.base_dataset import BaseDataset, get_transform
+from data.base_dataset import BaseDataset, get_transform, AugStrong
 from data.image_folder import make_dataset
 from PIL import Image
+import numpy as np
 import random
 
 
@@ -35,6 +36,8 @@ class UnalignedDataset(BaseDataset):
         output_nc = self.opt.input_nc if btoA else self.opt.output_nc      # get the number of channels of output image
         self.transform_A = get_transform(self.opt, grayscale=(input_nc == 1))
         self.transform_B = get_transform(self.opt, grayscale=(output_nc == 1))
+        if self.opt.aug_strong:
+            self.strong_aug = AugStrong.get_aug()
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -56,6 +59,16 @@ class UnalignedDataset(BaseDataset):
         B_path = self.B_paths[index_B]
         A_img = Image.open(A_path).convert('RGB')
         B_img = Image.open(B_path).convert('RGB')
+
+        # strong augmentation is also applied if flip is enabled.
+        if self.opt.aug_strong:
+            A = {"image": np.array(A_img)}
+            augmented = self.strong_aug(**A)
+            A_img = Image.fromarray(augmented["image"])
+            B = {"image": np.array(B_img)}
+            augmented = self.strong_aug(**B)
+            B_img = Image.fromarray(augmented["image"])
+
         # apply image transformation
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
