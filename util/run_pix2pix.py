@@ -18,13 +18,13 @@ class RunPix2Pix(RunCycleGAN):
         K = 5      # your configuration.
         options = (f'--dataroot dummy --direction BtoA --model pix2pix --name {PROJECT} ' +
                    f'--load_size {SIZE} --crop_size {SIZE} --gpu_ids {GPU}')
-        pix2pix = RunPix2Pix(options)
+        pix2pix = RunPix2Pix(options, K)
           :
         _, abst_img = abstract_image_array(image_array_RGB_HWC, K)
         converted = pix2pix.convert(abst_img)
     """
     
-    def __init__(self, options, K=5):
+    def __init__(self, options, K):
         super().__init__(options)
         self.K = K
 
