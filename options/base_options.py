@@ -51,6 +51,8 @@ class BaseOptions():
         parser.add_argument('--aug_strong', action='store_true', help='if specified, apply strong data augmentation')
         parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
+        parser.add_argument('--invert', action='store_true', help='if specified, invert all the pixels')
+        parser.add_argument('--test_fake', action='store_true', help='if specified, draw fake part on image when testing')
         # additional parameters
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')

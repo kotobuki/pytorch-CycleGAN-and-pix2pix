@@ -38,6 +38,12 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--pool_size', type=int, default=50, help='the size of image buffer that stores previously generated images')
         parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
+        # pix2pix4ad parameters
+        parser.add_argument('--at_pct0', type=float, default=0.05, help='anomaly twin pcts[0]')
+        parser.add_argument('--at_pct1', type=float, default=0.10, help='anomaly twin pcts[1]')
+        parser.add_argument('--at_scale_a', type=float, default=0.2, help='anomaly twin scale a')
+        parser.add_argument('--at_scale_b', type=float, default=0.4, help='anomaly twin scale b')
+        parser.add_argument('--at_m', type=int, default=4, help='anomaly twin m')
 
         self.isTrain = True
         return parser

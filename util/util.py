@@ -101,3 +101,31 @@ def mkdir(path):
     """
     if not os.path.exists(path):
         os.makedirs(path)
+
+
+def concat_img_h(im1, im2, im3=None, heatmap=False):
+    def to_pil_image(img):
+        return Image.fromarray(img) if type(img) == np.ndarray else img
+    im1 = to_pil_image(im1)
+    im2 = to_pil_image(im2)
+    if im3 is not None:
+        im3 = to_pil_image(im3)
+    if heatmap:
+        W = im1.width + im2.width + im3.width * 2
+        dst = Image.new('RGB', (W, im1.height))
+        dst.paste(im1, (0, 0))
+        dst.paste(im2, (im1.width, 0))
+        dst.paste(im3, (im1.width + im2.width, 0))
+        bg = im1.convert("RGBA")
+        overlay = im3.convert("RGBA")
+        img = Image.blend(bg, overlay, 0.5)
+        img = img.convert("RGB")
+        dst.paste(img, (im1.width + im2.width + im3.width, 0))
+    else:
+        W = im1.width + im2.width + (0 if im3 is None else im3.width)
+        dst = Image.new('RGB', (W, im1.height))
+        dst.paste(im1, (0, 0))
+        dst.paste(im2, (im1.width, 0))
+        if im3 is not None:
+            dst.paste(im3, (im1.width + im2.width, 0))
+    return dst

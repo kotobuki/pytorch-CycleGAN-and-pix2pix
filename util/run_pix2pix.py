@@ -8,6 +8,35 @@ from util.util import tensor2im
 from util.run_cyclegan import RunCycleGAN
 
 
+class RunPix2PixRaw(RunCycleGAN):
+    """Pix2pix wrapper class for runtime inference, simply handling input image as it is.
+
+    Example:
+        PROJECT = 'YOUR FOLDER NAME UNDER checkpoint'
+        SIZE = 'YOUR DATA PX SIZE'
+        GPU = '-1' # if you use CPU, else 0 or whatever.
+        options = (f'--dataroot dummy --direction BtoA --model pix2pix --name {PROJECT} ' +
+                   f'--load_size {SIZE} --crop_size {SIZE} --gpu_ids {GPU}')
+        pix2pix = RunPix2Pix(options)
+          :
+        converted = pix2pix.convert(image_array_RGB_HWC)
+    """
+
+    def __init__(self, options):
+        super().__init__(options)
+
+    def convert(self, img):
+        AorB = self.normalize(self.totensor(img)).unsqueeze(0)
+        data = {
+            'A': AorB, 'A_paths': 'dummy',
+            'B': AorB, 'B_paths': 'dummy',
+        }
+        self.model.set_input(data)  # unpack data from data loader
+        self.model.test()           # run inference
+        visuals = self.model.get_current_visuals()  # get image results
+        return tensor2im(visuals['fake_B'])
+
+
 class RunPix2Pix(RunCycleGAN):
     """Pix2pix wrapper class for runtime inference.
 
