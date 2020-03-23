@@ -103,19 +103,31 @@ def mkdir(path):
         os.makedirs(path)
 
 
+def to_raw_image(img):
+    if type(img) == torch.Tensor:
+        # denormalize
+        img = img.detach().cpu().numpy().transpose(1, 2, 0)
+        if denorm_tensor:
+            img = (img * 0.5) + 0.5
+        img = (img * 255).astype(np.uint8)
+    return img
+
+
+def to_np(img):
+    img = to_raw_image(img)
+    return np.array(img)
+
+
+def to_pil(img):
+    img = to_raw_image(img)
+    return Image.fromarray(img) if type(img) == np.ndarray else img
+
+
 def concat_img_h(im1, im2, im3=None, heatmap=False, denorm_tensor=True):
-    def to_pil_image(img):
-        if type(img) == torch.Tensor:
-            img = img.detach().cpu().numpy().transpose(1, 2, 0)
-            if denorm_tensor:
-                img = (img * 0.5) + 0.5
-            img = (img * 255).astype(np.uint8)
-        print(img.shape)
-        return Image.fromarray(img) if type(img) == np.ndarray else img
-    im1 = to_pil_image(im1)
-    im2 = to_pil_image(im2)
+    im1 = to_pil(im1)
+    im2 = to_pil(im2)
     if im3 is not None:
-        im3 = to_pil_image(im3)
+        im3 = to_pil(im3)
     if heatmap:
         W = im1.width + im2.width + im3.width * 2
         dst = Image.new('RGB', (W, im1.height))
