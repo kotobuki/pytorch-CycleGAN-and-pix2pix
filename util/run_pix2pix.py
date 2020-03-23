@@ -22,8 +22,8 @@ class RunPix2PixRaw(RunCycleGAN):
         converted = pix2pix.convert(image_array_RGB_HWC)
     """
 
-    def __init__(self, options):
-        super().__init__(options)
+    def __init__(self, options, verbose=False):
+        super().__init__(options, verbose=verbose)
 
     def convert(self, img):
         AorB = self.normalize(self.totensor(img)).unsqueeze(0)
@@ -53,8 +53,8 @@ class RunPix2Pix(RunCycleGAN):
         converted = pix2pix.convert(abst_img)
     """
     
-    def __init__(self, options, K):
-        super().__init__(options)
+    def __init__(self, options, K, verbose=False):
+        super().__init__(options, verbose=verbose)
         self.K = K
 
     def preprocess_file(self, file_name):

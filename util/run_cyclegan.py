@@ -18,8 +18,8 @@ class RunCycleGAN:
         converted = cyclegan.convert(image_array_RGB_HWC)
     """
 
-    def __init__(self, options):
-        opt = TestOptions(options).parse()  # get test options
+    def __init__(self, options, verbose=False):
+        opt = TestOptions(options).parse(verbose=verbose)  # get test options
         # hard-code some parameters for test
         opt.num_threads = 0   # test code only supports num_threads = 1
         opt.batch_size = 1    # test code only supports batch_size = 1
