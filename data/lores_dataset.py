@@ -7,16 +7,18 @@ import numpy as np
 from util.util import to_np
 
 
-def lo_res_pil(img, blur=4, mosaic=0):
+def lo_res_pil(img, blur=4, mosaic=0, posterize=0):
     if blur > 0:
-        img = img.filter(ImageFilter.GaussianBlur(4))
+        img = img.filter(ImageFilter.GaussianBlur(blur))
     if mosaic > 0:
         img = img.resize([xy // mosaic for xy in img.size]).resize(img.size)
+    if 8 > posterize and posterize > 0:
+        img = ImageOps.posterize(img, posterize).convert('L').convert('RGB')
     return img
 
 
-def lo_res(np_img, blur=4, mosaic=0):
-    img = lo_res_pil(Image.fromarray(np_img), blur=blur, mosaic=mosaic)
+def lo_res(np_img, blur=4, mosaic=0, posterize=0):
+    img = lo_res_pil(Image.fromarray(np_img), blur=blur, mosaic=mosaic, posterize=posterize)
     return np.array(img)
 
 
@@ -61,7 +63,8 @@ class LoResDataset(BaseDataset):
         # split AB image into A and B
         w, h = AB.size
 
-        A = lo_res_pil(AB)
+        A = lo_res_pil(AB, blur=self.opt.lo_blur, mosaic=self.opt.lo_mosaic,
+                       posterize=self.opt.lo_posterize)
         B = AB
 
         # strong augmentation is also applied if flip is enabled.

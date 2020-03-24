@@ -48,6 +48,7 @@ class TrainOptions(BaseOptions):
         # lores parameters
         parser.add_argument('--lo_blur', type=int, default=4, help='cutout blur pixels')
         parser.add_argument('--lo_mosaic', type=int, default=4, help='cutout mosaic pixels')
+        parser.add_argument('--lo_posterize', type=int, default=8, help='cutout posterization bits')
 
         self.isTrain = True
         return parser
