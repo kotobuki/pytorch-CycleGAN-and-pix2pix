@@ -36,6 +36,19 @@ class RunPix2PixRaw(RunCycleGAN):
         visuals = self.model.get_current_visuals()  # get image results
         return tensor2im(visuals['fake_B'])
 
+    def converts(self, imgs):
+        tensors = [self.totensor(img) for img in imgs]
+        AorB = self.normalize(torch.cat(tensors))
+        TBD
+        data = {
+            'A': AorB, 'A_paths': 'dummy',
+            'B': AorB, 'B_paths': 'dummy',
+        }
+        self.model.set_input(data)  # unpack data from data loader
+        self.model.test()           # run inference
+        visuals = self.model.get_current_visuals()  # get image results
+        return tensor2im(visuals['fake_B'])
+
 
 class RunPix2Pix(RunCycleGAN):
     """Pix2pix wrapper class for runtime inference.

@@ -3,12 +3,12 @@ from .base_model import BaseModel
 from . import networks
 
 
-class InpaintingModel(BaseModel):
+class LoResModel(BaseModel):
     """ This class implements the pix2pix model, for learning a mapping from input images to output images given paired data.
     And the paired data is created from a single input image.
-    The input is a copy of the given image with cutout applied, and the output is the given image as it is.
+    The input is a copy of the given image with blur/mosaic applied, and the output is the given image as it is.
 
-    The model training requires '--dataset_mode inpainting' dataset.
+    The model training requires '--dataset_mode lores' dataset.
     By default, it uses a '--netG unet256' U-Net generator,
     a '--netD basic' discriminator (PatchGAN),
     and a '--gan_mode' vanilla GAN loss (the cross-entropy objective used in the orignal GAN paper).
@@ -31,7 +31,7 @@ class InpaintingModel(BaseModel):
         By default, we use vanilla GAN loss, UNet with batchnorm, and aligned datasets.
         """
         # changing the default values to match the pix2pix paper (https://phillipi.github.io/pix2pix/)
-        parser.set_defaults(norm='batch', netG='unet_256', dataset_mode='inpainting')
+        parser.set_defaults(norm='batch', netG='unet_256', dataset_mode='lores')
         if is_train:
             parser.set_defaults(pool_size=0, gan_mode='vanilla')
             parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')

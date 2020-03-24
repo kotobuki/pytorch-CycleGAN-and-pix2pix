@@ -38,13 +38,16 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--pool_size', type=int, default=50, help='the size of image buffer that stores previously generated images')
         parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
-        # pix2pix4ad parameters
+        # pix2pix4ad, inpainting parameters
         parser.add_argument('--co_pct0', type=float, default=0.05, help='cutout pcts[0]')
         parser.add_argument('--co_pct1', type=float, default=0.10, help='cutout pcts[1]')
         parser.add_argument('--co_depth_a', type=float, default=0.0, help='cutout depth a')
         parser.add_argument('--co_depth_b', type=float, default=1.0, help='cutout depth b')
         parser.add_argument('--co_m', type=int, default=4, help='cutout smoothness: m')
         parser.add_argument('--co_k', type=int, default=4, help='cutout number of cuts: k')
+        # lores parameters
+        parser.add_argument('--lo_blur', type=int, default=4, help='cutout blur pixels')
+        parser.add_argument('--lo_mosaic', type=int, default=4, help='cutout mosaic pixels')
 
         self.isTrain = True
         return parser

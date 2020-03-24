@@ -103,7 +103,7 @@ def mkdir(path):
         os.makedirs(path)
 
 
-def to_raw_image(img):
+def to_raw_image(img, denorm_tensor=True):
     if type(img) == torch.Tensor:
         # denormalize
         img = img.detach().cpu().numpy().transpose(1, 2, 0)
@@ -113,13 +113,13 @@ def to_raw_image(img):
     return img
 
 
-def to_np(img):
-    img = to_raw_image(img)
+def to_np(img, denorm_tensor=True):
+    img = to_raw_image(img, denorm_tensor=denorm_tensor)
     return np.array(img)
 
 
-def to_pil(img):
-    img = to_raw_image(img)
+def to_pil(img, denorm_tensor=True):
+    img = to_raw_image(img, denorm_tensor=denorm_tensor)
     return Image.fromarray(img) if type(img) == np.ndarray else img
 
 
