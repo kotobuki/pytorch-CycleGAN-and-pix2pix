@@ -135,8 +135,19 @@ class BaseOptions():
             id = int(str_id)
             if id >= 0:
                 opt.gpu_ids.append(id)
-        if len(opt.gpu_ids) > 0:
+
+        if torch.cuda.is_available() and len(opt.gpu_ids) > 0:
             torch.cuda.set_device(opt.gpu_ids[0])
+            opt.device = torch.device('cuda')
+            print(f"Using CUDA device: {opt.gpu_ids[0]}")
+        elif torch.backends.mps.is_available():
+            opt.device = torch.device('mps')
+            opt.gpu_ids = []  # MPS does not support multiple GPUs
+            print("Using MPS backend.")
+        else:
+            opt.device = torch.device('cpu')
+            opt.gpu_ids = []
+            print("CUDA and MPS are not available. Using CPU.")
 
         self.opt = opt
         return self.opt
